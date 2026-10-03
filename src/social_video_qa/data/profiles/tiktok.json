@@ -1,0 +1,45 @@
+{
+  "id": "tiktok",
+  "title": "TikTok (Content Posting API and app uploads)",
+  "platform": "TikTok",
+  "description": "Video restrictions from TikTok's Content Posting API media transfer guide, plus vertical 9:16 recommendations. TikTok publishes no audio or loudness requirements, so those rules only warn.",
+  "sources": [
+    {
+      "title": "TikTok for Developers: Content Posting API, Media Transfer Guide (video restrictions)",
+      "url": "https://developers.tiktok.com/doc/content-posting-api-media-transfer-guide",
+      "checked": "2026-10-03"
+    }
+  ],
+  "notes": [
+    "All creators can post 3-minute videos, some accounts 5 or 10 minutes, and the API accepts at most 10 minutes. The duration rule errors above 10 minutes and warns above 3.",
+    "TikTok documents no audio codec, sample rate or loudness requirements. AAC in MP4 is the safe default."
+  ],
+  "rules": {
+    "file.size": {"max_mb": 4000, "basis": "documented"},
+    "container.format": {"allowed": ["mp4", "webm", "mov"], "recommended": ["mp4"], "basis": "documented"},
+    "duration": {"max_s": 600, "recommended_max_s": 180, "basis": "documented"},
+    "video.codec": {"allowed": ["h264", "hevc", "vp8", "vp9"], "recommended": ["h264"], "basis": "documented"},
+    "video.resolution": {"min_width": 360, "min_height": 360, "max_width": 4096, "max_height": 4096, "basis": "documented"},
+    "video.aspect": {"recommended": "9:16", "basis": "convention"},
+    "video.size": {"recommended": ["1080x1920"], "severity": "info", "basis": "convention"},
+    "video.rotation": {"severity": "info", "basis": "convention"},
+    "video.fps": {"min": 23, "max": 60, "basis": "documented"},
+    "video.cfr": {"basis": "convention"},
+    "audio.codec": {"recommended": ["aac"], "severity": "info", "basis": "convention"},
+    "audio.loudness": {"target_lufs": -14, "tolerance_lu": 1, "basis": "convention"},
+    "audio.true_peak": {"max_dbtp": -1, "basis": "convention"},
+    "audio.hiss": {"max_lufs": -35, "basis": "observed", "note": "Observed 2026-10: a heuristic calibrated on game-trailer mixes, not a platform rule; see docs/checks.md#audiohiss."},
+    "audio.silence": {"basis": "convention"},
+    "content.black_start": {"max_s": 0.1, "basis": "convention"},
+    "content.frozen_start": {"max_s": 1, "basis": "convention"},
+    "metadata.location": {"basis": "convention"}
+  },
+  "fix": {
+    "size": "1080x1920",
+    "fps": "auto",
+    "video": {"crf": 20, "maxrate_kbps": 10000, "bufsize_kbps": 20000, "bframes": 0, "keyint_s": 2},
+    "audio": {"bitrate_kbps": 192, "sample_rate": 48000, "channels": 2},
+    "loudness": {"target_lufs": -14, "true_peak_dbtp": -1.5},
+    "container": {"format": "mp4", "faststart": true, "edit_list": false}
+  }
+}

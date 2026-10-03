@@ -1,0 +1,45 @@
+name: Platform spec changed
+description: A platform changed its limits, or a profile does not match the platform's behaviour
+labels: [profiles]
+body:
+  - type: dropdown
+    id: profile
+    attributes:
+      label: Profile
+      options:
+        - instagram-reels-api
+        - instagram-story-api
+        - meta-ads-instagram
+        - app-store-preview-iphone
+        - app-store-preview-ipad
+        - youtube-shorts
+        - tiktok
+        - other / new profile
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: What is different?
+      description: The rule, the current value in the profile, and the value you expect.
+    validations:
+      required: true
+  - type: dropdown
+    id: basis
+    attributes:
+      label: Where does this come from?
+      options:
+        - Documented by the platform (please link it below)
+        - Observed in practice (please say when and how)
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Source link
+      placeholder: https://...
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: For observations, which upload route did you use (API, app, web), and roughly when? Please remove account IDs and other private data.

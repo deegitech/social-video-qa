@@ -1,0 +1,108 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "social-video-qa"
+version = "0.1.0"
+description = "Check (and fix) videos against Instagram, TikTok, YouTube Shorts, Meta ads and App Store preview specs before you upload."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "DEEGITECH" }]
+keywords = [
+  "ffmpeg",
+  "ffprobe",
+  "video",
+  "qa",
+  "instagram-reels",
+  "tiktok",
+  "youtube-shorts",
+  "app-store",
+  "app-preview",
+  "loudness",
+  "ebu-r128",
+  "ci",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Operating System :: MacOS",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Multimedia :: Video",
+  "Topic :: Multimedia :: Video :: Conversion",
+  "Topic :: Software Development :: Quality Assurance",
+  "Typing :: Typed",
+]
+dependencies = []
+
+[project.optional-dependencies]
+yaml = ["PyYAML>=6"]
+toml = ["tomli>=1.1; python_version < '3.11'"]
+dev = ["pytest>=7.4", "PyYAML>=6", "tomli>=1.1; python_version < '3.11'", "ruff>=0.6", "mypy>=1.10", "types-PyYAML"]
+
+[project.scripts]
+svqa = "social_video_qa.cli:main"
+social-video-qa = "social_video_qa.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/deegitech/social-video-qa"
+Documentation = "https://github.com/deegitech/social-video-qa/tree/main/docs"
+Issues = "https://github.com/deegitech/social-video-qa/issues"
+Changelog = "https://github.com/deegitech/social-video-qa/blob/main/CHANGELOG.md"
+Security = "https://github.com/deegitech/social-video-qa/security/policy"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/social_video_qa"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src",
+  "/tests",
+  "/docs",
+  "/examples",
+  "/scripts",
+  "/README.md",
+  "/README.tr.md",
+  "/LICENSE",
+  "/CHANGELOG.md",
+  "/SECURITY.md",
+  "/CONTRIBUTING.md",
+  "/CODE_OF_CONDUCT.md",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = ["ffmpeg: needs ffmpeg and ffprobe on PATH (skipped when missing)"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 120
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "SIM", "RUF", "PL"]
+ignore = [
+  "S603",    # subprocess with an argument list is the point of this tool (no shell anywhere)
+  "PLR0911", # many return statements: check functions return early by design
+  "PLR0912",
+  "PLR0913",
+  "PLR0915",
+  "PLR2004", # magic values: thresholds are documented where they are used
+  "RUF001",  # ambiguous unicode in strings: the report uses check marks on purpose
+  "S101",    # asserts only narrow types after an explicit check; they never guard behaviour
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "S108", "S314", "S607", "PLC0415"]
+"scripts/*" = ["S101"]

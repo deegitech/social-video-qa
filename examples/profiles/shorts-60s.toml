@@ -1,0 +1,14 @@
+# A team rule on top of YouTube Shorts: keep Shorts to 60 seconds and skip the
+# informational GOP-length check. TOML profiles need Python 3.11+ (tomllib), or on
+# Python 3.10:  pip install "social-video-qa[toml]"
+id = "shorts-60s"
+extends = "youtube-shorts"
+title = "YouTube Shorts, 60 seconds max"
+
+[rules.duration]
+max_s = 60
+note = "Team rule: keep Shorts under a minute."
+basis = "convention"
+
+[rules."video.keyint"]
+severity = "off"
