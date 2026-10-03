@@ -1,0 +1,23 @@
+{
+  "id": "instagram-story-api",
+  "extends": "instagram-reels-api",
+  "title": "Instagram Stories (Instagram Graph API publishing)",
+  "platform": "Instagram",
+  "description": "Story videos published through the Instagram Graph API. Same encoding rules as Reels, with Meta's shorter duration, smaller file size and slightly narrower aspect-ratio range for Stories.",
+  "sources": [
+    {
+      "title": "Meta for Developers: Instagram Platform, IG User Media reference, Story video specifications",
+      "url": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+      "checked": "2026-10-03"
+    }
+  ],
+  "notes": [
+    "Stories longer than 60 seconds are rejected by the API; split them into several stories.",
+    "Meta lists the audio bitrate as '128kbps' without saying whether it is a ceiling or a target. This profile treats it as a ceiling (with 2 kbps of slack for AAC overshoot) and only warns."
+  ],
+  "rules": {
+    "file.size": {"max_mb": 100, "basis": "documented"},
+    "duration": {"min_s": 3, "max_s": 60, "basis": "documented"},
+    "video.aspect": {"min": 0.1, "max": 10, "recommended": "9:16", "basis": "documented"}
+  }
+}

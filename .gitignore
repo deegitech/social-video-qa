@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.python-version
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Reports and media you are testing with (never commit other people's videos)
+*.mp4
+*.mov
+*.m4v
+*.webm
+*.mkv
+qa.xml
+qa.json
+svqa-report.*
+
+# Files written by `svqa fix`
+.svqa-manifest.json
+.svqa-manifest.lock
+*.svqa-tmp-*
+
+# Editors and OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Local configuration and secrets (this tool needs none; keep it that way)
+.env
+.env.*
+*.pem
+*.key
+*.p8

@@ -1,0 +1,38 @@
+name: Bug report
+description: Something in svqa does not work as documented
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please do not attach media you cannot share publicly, and remove personal data
+        (names, paths, location metadata) from logs. A clip generated with FFmpeg's lavfi sources is usually enough.
+        **Security problems:** please use the private reporting described in SECURITY.md instead.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: The exact svqa command, and ideally an ffmpeg command that generates a sample file.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: Paste the output (`--format json` is most useful). Shorten long outputs.
+      render: text
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Paste the output of `svqa --version` and `svqa doctor`, and your OS.
+      render: text
+    validations:
+      required: true

@@ -1,0 +1,19 @@
+{
+  "id": "brand-reels",
+  "extends": "instagram-reels-api",
+  "title": "Brand Reels (house style on top of Instagram's API spec)",
+  "description": "Example of a stricter in-house profile: exact 1080x1920 at 30 fps, tighter loudness, and hiss treated as an error.",
+  "x-owner": "video team",
+  "rules": {
+    "video.size": {"allowed": ["1080x1920"], "severity": "error", "basis": "convention"},
+    "video.fps": {"min": 30, "max": 30},
+    "duration": {"max_s": 90},
+    "audio.loudness": {"tolerance_lu": 0.5},
+    "audio.hiss": {"severity": "error"},
+    "audio.silence": null
+  },
+  "fix": {
+    "fps": 30,
+    "video": {"crf": 18}
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "id": "youtube-shorts",
+  "title": "YouTube Shorts",
+  "platform": "YouTube",
+  "description": "Uploads meant to be classified as Shorts (square or vertical, up to 3 minutes), checked against YouTube's recommended upload encoding settings. Most encoding rules are recommendations, so they warn.",
+  "sources": [
+    {
+      "title": "YouTube Help: Upload YouTube Shorts",
+      "url": "https://support.google.com/youtube/answer/12779649",
+      "checked": "2026-10-03"
+    },
+    {
+      "title": "YouTube Help: Understand three-minute YouTube Shorts",
+      "url": "https://support.google.com/youtube/answer/15424877",
+      "checked": "2026-10-03"
+    },
+    {
+      "title": "YouTube Help: Recommended upload encoding settings",
+      "url": "https://support.google.com/youtube/answer/1722171",
+      "checked": "2026-10-03"
+    }
+  ],
+  "notes": [
+    "Wider-than-square or longer-than-3-minute uploads are not rejected; YouTube treats them as regular videos instead of Shorts. That is why aspect and duration are errors here.",
+    "YouTube recommends '2 consecutive B frames'. This profile does not require B-frames; `svqa fix` encodes without them so it can also honour 'no edit lists' without shifting audio sync.",
+    "YouTube's recommended GOP is half the frame rate. That is checked as info only, because YouTube re-encodes every upload.",
+    "The -14 LUFS reference for YouTube's loudness normalisation is widely measured by the community, not documented by YouTube."
+  ],
+  "rules": {
+    "container.format": {"recommended": ["mp4"], "basis": "documented"},
+    "container.faststart": {"severity": "warn", "basis": "documented"},
+    "container.edit_list": {"severity": "warn", "basis": "documented", "note": "YouTube: 'No Edit Lists (or the video might not get processed correctly)'."},
+    "duration": {"max_s": 180, "basis": "documented"},
+    "video.codec": {"recommended": ["h264"], "basis": "documented"},
+    "video.profile": {"allowed": {"h264": ["High"]}, "severity": "warn", "basis": "documented"},
+    "video.chroma": {"allowed": ["4:2:0"], "severity": "warn", "basis": "documented"},
+    "video.progressive": {"severity": "warn", "basis": "documented"},
+    "video.aspect": {"max": 1, "recommended": "9:16", "basis": "documented", "note": "Shorts must be square or vertical."},
+    "video.size": {"recommended": ["1080x1920"], "severity": "info", "basis": "convention"},
+    "video.rotation": {"severity": "info", "basis": "convention"},
+    "video.fps": {"max": 60, "basis": "documented"},
+    "video.closed_gop": {"severity": "warn", "basis": "documented"},
+    "video.keyint": {"max_s": 0.5, "severity": "info", "basis": "documented", "note": "YouTube: 'GOP of half the frame rate'."},
+    "audio.codec": {"recommended": ["aac", "opus"], "basis": "documented"},
+    "audio.profile": {"allowed": {"aac": ["LC"]}, "basis": "documented"},
+    "audio.sample_rate": {"recommended": [48000], "basis": "documented"},
+    "audio.bitrate": {"recommended_min_kbps": 384, "severity": "info", "basis": "documented", "note": "YouTube recommends 384 kbps for stereo."},
+    "audio.loudness": {"target_lufs": -14, "tolerance_lu": 1, "basis": "convention"},
+    "audio.true_peak": {"max_dbtp": -1, "basis": "convention"},
+    "audio.hiss": {"max_lufs": -35, "basis": "observed", "note": "Observed 2026-10: a heuristic calibrated on game-trailer mixes, not a platform rule; see docs/checks.md#audiohiss."},
+    "audio.silence": {"basis": "convention"},
+    "content.black_start": {"max_s": 0.1, "basis": "convention"},
+    "content.frozen_start": {"max_s": 1, "basis": "convention"},
+    "metadata.location": {"basis": "convention"}
+  },
+  "fix": {
+    "size": "1080x1920",
+    "fps": "auto",
+    "video": {"crf": 18, "maxrate_kbps": 16000, "bufsize_kbps": 32000, "bframes": 0, "keyint_s": 0.5},
+    "audio": {"bitrate_kbps": 384, "sample_rate": 48000, "channels": 2},
+    "loudness": {"target_lufs": -14, "true_peak_dbtp": -1.5},
+    "container": {"format": "mp4", "faststart": true, "edit_list": false}
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "id": "app-store-preview-iphone",
+  "title": "App Store app preview, iPhone 6.9\"/6.5\"/6.3\"/6.1\" (886x1920)",
+  "platform": "App Store Connect",
+  "description": "App previews for the iPhone display sizes that accept 886x1920 (portrait) or 1920x886 (landscape). Apple's published H.264 requirements, plus a loudness target and a 25 fps lower bound, both conservative conventions that only warn.",
+  "sources": [
+    {
+      "title": "Apple Developer: App Store Connect Help, App preview specifications",
+      "url": "https://developer.apple.com/help/app-store-connect/reference/app-preview-specifications",
+      "checked": "2026-10-03"
+    }
+  ],
+  "notes": [
+    "Apple lists separate accepted resolutions per display size: 5.5\" and 4\" iPhones take 1080x1920, 4.7\" takes 750x1334. Extend this profile and change video.size for those (see examples/profiles).",
+    "Apple publishes a 30 fps maximum but no minimum. The 25 fps lower bound is a conservative choice and only warns.",
+    "Apple's 10-12 Mbps is a target for H.264, so the bitrate rule only warns. It is checked on the whole file, with about 2% slack on each side.",
+    "Apple also accepts ProRes 422 HQ in .mov (about 220 Mbps). ProRes previews will get bitrate warnings from this profile.",
+    "Apple's stereo can also be two mono tracks; this tool checks only the first audio stream, so that layout is reported as 1 channel."
+  ],
+  "rules": {
+    "file.size": {"max_mb": 500, "basis": "documented"},
+    "container.format": {"allowed": ["mov", "m4v", "mp4"], "basis": "documented"},
+    "container.tracks_enabled": {"basis": "documented", "note": "Apple: 'All tracks should be enabled'."},
+    "duration": {"min_s": 15, "max_s": 30, "basis": "documented"},
+    "bitrate.total": {"recommended_min_kbps": 9800, "recommended_max_kbps": 12300, "basis": "documented", "note": "Apple's target is 10-12 Mbps for H.264."},
+    "video.codec": {"allowed": ["h264", "prores"], "recommended": ["h264"], "basis": "documented"},
+    "video.profile": {"allowed": {"h264": ["Constrained Baseline", "Baseline", "Main", "High"]}, "basis": "documented", "note": "Apple: 'up to High Profile Level 4.0'."},
+    "video.level": {"max": {"h264": 4.0}, "basis": "documented"},
+    "video.progressive": {"basis": "documented"},
+    "video.size": {"allowed": ["886x1920", "1920x886"], "basis": "documented"},
+    "video.sar": {"basis": "convention"},
+    "video.rotation": {"severity": "warn", "basis": "convention", "note": "Bake rotation into the pixels; do not rely on App Store Connect honouring rotation metadata."},
+    "video.fps": {"max": 30, "recommended_min": 25, "basis": "documented", "note": "Apple: max 30 fps. The 25 fps lower bound is a conservative convention."},
+    "video.cfr": {"basis": "convention"},
+    "audio.present": {"basis": "observed", "note": "Observed 2026-09 (developer reports): Apple's spec describes a stereo audio track, and developers widely report that uploads without an audio track fail. Add silence if the preview has no sound."},
+    "audio.codec": {"allowed": ["aac", "pcm_s16le", "pcm_s16be", "pcm_s24le", "pcm_s24be", "pcm_s32le", "pcm_s32be"], "recommended": ["aac"], "basis": "documented", "note": "PCM is listed for ProRes previews."},
+    "audio.sample_rate": {"allowed": [44100, 48000], "basis": "documented"},
+    "audio.channels": {"allowed": [2], "basis": "documented"},
+    "audio.bitrate": {"recommended_min_kbps": 224, "recommended_max_kbps": 288, "basis": "documented", "note": "Apple lists 256 kbps AAC."},
+    "audio.loudness": {"target_lufs": -16, "tolerance_lu": 1, "basis": "convention", "note": "Apple publishes no loudness target; -16 LUFS is a common mobile target."},
+    "audio.true_peak": {"max_dbtp": -1, "basis": "convention"},
+    "audio.hiss": {"max_lufs": -35, "basis": "observed", "note": "Observed 2026-10: a heuristic calibrated on game-trailer mixes, not a platform rule; see docs/checks.md#audiohiss."},
+    "audio.silence": {"basis": "convention"},
+    "content.black_start": {"max_s": 0.1, "basis": "convention"},
+    "content.frozen_start": {"max_s": 1, "basis": "convention"},
+    "metadata.location": {"basis": "convention"}
+  },
+  "fix": {
+    "size": "886x1920",
+    "fps": "auto",
+    "video": {"profile": "high", "level": "4.0", "cbr_kbps": 10000, "bframes": 0, "keyint_s": 2},
+    "audio": {"bitrate_kbps": 256, "sample_rate": 48000, "channels": 2, "add_silent_track": true},
+    "loudness": {"target_lufs": -16, "true_peak_dbtp": -1.5},
+    "container": {"format": "mp4", "faststart": true, "edit_list": false}
+  }
+}

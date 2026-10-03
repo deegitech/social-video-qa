@@ -1,0 +1,58 @@
+{
+  "id": "instagram-reels-api",
+  "title": "Instagram Reels (Instagram Graph API publishing)",
+  "platform": "Instagram",
+  "description": "Reels published through the Instagram Graph API content-publishing endpoints. Hard limits follow Meta's published Reel specifications; no B-frames, constant frame rate and the loudness targets are conservative extras and only warn.",
+  "sources": [
+    {
+      "title": "Meta for Developers: Instagram Platform, IG User Media reference, Reel specifications",
+      "url": "https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-user/media",
+      "checked": "2026-10-03"
+    }
+  ],
+  "notes": [
+    "Meta lists the audio bitrate as '128kbps' without saying whether it is a ceiling or a target. This profile treats it as a ceiling (with 2 kbps of slack for AAC overshoot) and only warns.",
+    "Meta asks for 'no edit lists'. An MP4 with B-frames normally needs an edit list to start at time zero, which is why this profile also warns about B-frames.",
+    "Instagram re-encodes every upload. Passing these checks makes rejections and processing errors unlikely; it does not guarantee how the post is ranked."
+  ],
+  "rules": {
+    "file.size": {"max_mb": 300, "basis": "documented"},
+    "container.format": {"allowed": ["mp4", "mov"], "basis": "documented"},
+    "container.faststart": {"basis": "documented"},
+    "container.edit_list": {"basis": "documented"},
+    "container.streams": {"max_video": 1, "max_audio": 1, "basis": "convention"},
+    "duration": {"min_s": 3, "max_s": 900, "basis": "documented"},
+    "video.codec": {"allowed": ["h264", "hevc"], "basis": "documented"},
+    "video.chroma": {"allowed": ["4:2:0"], "basis": "documented"},
+    "video.progressive": {"basis": "documented"},
+    "video.resolution": {"max_width": 1920, "basis": "documented"},
+    "video.aspect": {"min": 0.01, "max": 10, "recommended": "9:16", "basis": "documented"},
+    "video.size": {"recommended": ["1080x1920"], "severity": "info", "basis": "convention", "note": "Not in Meta's API spec; 1080x1920 is the common full-quality vertical size."},
+    "video.sar": {"severity": "info", "basis": "convention"},
+    "video.rotation": {"severity": "info", "basis": "convention"},
+    "video.fps": {"min": 23, "max": 60, "basis": "documented"},
+    "video.cfr": {"basis": "convention", "note": "Not in Meta's API spec; variable frame rate is a common cause of audio drift after re-encoding."},
+    "video.bitrate": {"max_kbps": 25000, "basis": "documented"},
+    "video.b_frames": {"basis": "convention", "note": "Not in Meta's spec. Without B-frames an MP4 needs no edit list to start at time zero."},
+    "video.closed_gop": {"basis": "documented"},
+    "audio.codec": {"allowed": ["aac"], "basis": "documented"},
+    "audio.sample_rate": {"max_hz": 48000, "basis": "documented"},
+    "audio.channels": {"allowed": [1, 2], "basis": "documented"},
+    "audio.bitrate": {"max_kbps": 130, "basis": "documented", "note": "Meta writes '128kbps'. Treated as a ceiling with 2 kbps of slack, because AAC encoders asked for 128k often measure slightly above it."},
+    "audio.loudness": {"target_lufs": -14, "tolerance_lu": 1, "basis": "convention", "note": "Common streaming target; Meta publishes no loudness requirement."},
+    "audio.true_peak": {"max_dbtp": -1, "basis": "convention"},
+    "audio.hiss": {"max_lufs": -35, "basis": "observed", "note": "Observed 2026-10: a heuristic calibrated on game-trailer mixes, not a platform rule; see docs/checks.md#audiohiss."},
+    "audio.silence": {"basis": "convention"},
+    "content.black_start": {"max_s": 0.1, "basis": "convention"},
+    "content.frozen_start": {"max_s": 1, "basis": "convention"},
+    "metadata.location": {"basis": "convention"}
+  },
+  "fix": {
+    "size": "1080x1920",
+    "fps": "auto",
+    "video": {"crf": 20, "maxrate_kbps": 8000, "bufsize_kbps": 16000, "bframes": 0, "keyint_s": 2},
+    "audio": {"bitrate_kbps": 128, "sample_rate": 48000, "channels": 2},
+    "loudness": {"target_lufs": -14, "true_peak_dbtp": -1.5},
+    "container": {"format": "mp4", "faststart": true, "edit_list": false}
+  }
+}

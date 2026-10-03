@@ -1,0 +1,50 @@
+{
+  "id": "meta-ads-instagram",
+  "title": "Meta ads on Instagram (Reels and Stories placements)",
+  "platform": "Meta Ads",
+  "description": "Vertical video creatives for Meta ads shown in Instagram Reels and Stories. Mostly Meta Ads Guide recommendations (warnings); the 15-second limit is an observation, not a documented rule, so it warns too.",
+  "sources": [
+    {
+      "title": "Meta Business Help: Ads Guide, Instagram Reels video ads",
+      "url": "https://www.facebook.com/business/ads-guide/update/video/instagram-reels",
+      "checked": "2026-10-03"
+    }
+  ],
+  "notes": [
+    "Observed (2026-10): ad videos longer than 15 seconds were not eligible for Instagram ad placements (the Marketing API reported is_instagram_eligible=false, and the same video cut to 14.8 seconds became eligible), although the Ads Guide lists up to 15 minutes for Reels ads. The rule only warns; use --strict, or set duration.severity to error in your own profile, to enforce it. If your placements accept longer videos, extend this profile and raise duration.max_s.",
+    "The Ads Guide also recommends keeping text and logos out of the top 14%, the bottom 35% and 6% at each side. This tool does not inspect picture content for that."
+  ],
+  "rules": {
+    "file.size": {"max_mb": 4000, "basis": "documented"},
+    "container.format": {"allowed": ["mp4", "mov"], "basis": "documented"},
+    "container.faststart": {"severity": "warn", "basis": "convention"},
+    "duration": {"max_s": 15, "severity": "warn", "basis": "observed", "note": "Observed 2026-10; the Ads Guide lists up to 15 minutes for Reels ads, so this only warns."},
+    "video.codec": {"recommended": ["h264"], "basis": "documented"},
+    "video.chroma": {"allowed": ["4:2:0"], "severity": "warn", "basis": "convention"},
+    "video.progressive": {"severity": "warn", "basis": "documented"},
+    "video.aspect": {"recommended": "9:16", "basis": "documented"},
+    "video.size": {"recommended": ["1440x2560", "1080x1920"], "severity": "warn", "basis": "documented", "note": "The Ads Guide recommends 1440x2560; 1080x1920 is accepted as the common size."},
+    "video.sar": {"basis": "convention"},
+    "video.rotation": {"severity": "info", "basis": "convention"},
+    "video.fps": {"max": 60, "basis": "convention"},
+    "video.cfr": {"basis": "documented"},
+    "audio.codec": {"recommended": ["aac"], "basis": "documented"},
+    "audio.channels": {"recommended": [2], "basis": "documented"},
+    "audio.bitrate": {"recommended_min_kbps": 128, "basis": "documented"},
+    "audio.loudness": {"target_lufs": -14, "tolerance_lu": 1, "basis": "convention"},
+    "audio.true_peak": {"max_dbtp": -1, "basis": "convention"},
+    "audio.hiss": {"max_lufs": -35, "basis": "observed", "note": "Observed 2026-10: a heuristic calibrated on game-trailer mixes, not a platform rule; see docs/checks.md#audiohiss."},
+    "audio.silence": {"basis": "convention"},
+    "content.black_start": {"max_s": 0.1, "basis": "convention"},
+    "content.frozen_start": {"max_s": 1, "basis": "convention"},
+    "metadata.location": {"basis": "convention"}
+  },
+  "fix": {
+    "size": "1080x1920",
+    "fps": "auto",
+    "video": {"crf": 19, "maxrate_kbps": 10000, "bufsize_kbps": 20000, "bframes": 0, "keyint_s": 2},
+    "audio": {"bitrate_kbps": 160, "sample_rate": 48000, "channels": 2},
+    "loudness": {"target_lufs": -14, "true_peak_dbtp": -1.5},
+    "container": {"format": "mp4", "faststart": true, "edit_list": false}
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "app-store-preview-ipad",
+  "extends": "app-store-preview-iphone",
+  "title": "App Store app preview, iPad 13\"/12.9\"/11\"/10.5\" (1200x1600)",
+  "platform": "App Store Connect",
+  "description": "App previews for iPad display sizes that accept 1200x1600 (portrait) or 1600x1200 (landscape). Same encoding rules as the iPhone profile.",
+  "sources": [
+    {
+      "title": "Apple Developer: App Store Connect Help, App preview specifications",
+      "url": "https://developer.apple.com/help/app-store-connect/reference/app-preview-specifications",
+      "checked": "2026-10-03"
+    }
+  ],
+  "notes": [
+    "The 9.7\" iPad takes 900x1200 / 1200x900, and the 12.9\" iPad also accepts those. Extend this profile and change video.size if you target them.",
+    "Apple publishes a 30 fps maximum but no minimum. The 25 fps lower bound is a conservative choice and only warns.",
+    "Apple's 10-12 Mbps is a target for H.264, so the bitrate rule only warns."
+  ],
+  "rules": {
+    "video.size": {"allowed": ["1200x1600", "1600x1200"], "basis": "documented"}
+  },
+  "fix": {
+    "size": "1200x1600"
+  }
+}

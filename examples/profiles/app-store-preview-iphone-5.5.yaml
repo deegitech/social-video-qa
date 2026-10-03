@@ -1,0 +1,12 @@
+# App previews for the 5.5" iPhone display, which takes 1080x1920 (portrait) or
+# 1920x1080 (landscape) instead of 886x1920. Everything else is inherited.
+# YAML profiles need PyYAML:  pip install "social-video-qa[yaml]"
+id: app-store-preview-iphone-5.5
+extends: app-store-preview-iphone
+title: App Store app preview, iPhone 5.5" (1080x1920)
+rules:
+  video.size:
+    allowed: ["1080x1920", "1920x1080"]
+    basis: documented
+fix:
+  size: 1080x1920
