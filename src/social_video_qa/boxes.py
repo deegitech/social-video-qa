@@ -165,7 +165,7 @@ def parse_stream(f: BinaryIO, size: int) -> BoxInfo:
     while pos < size:
         hdr = _read_header(f, pos, size)
         if hdr is None:
-            info.truncated = pos < size
+            info.truncated = True  # inside the loop pos < size always holds
             break
         box_size, typ, header = hdr
         if box_size < header:

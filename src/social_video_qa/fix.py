@@ -876,6 +876,8 @@ class Manifest:
                     f"another `svqa fix` run is writing to {self.directory} ({self.lock_path} exists). "
                     "If no other run is active, delete the lock file."
                 ) from exc
+        else:  # unreachable: every attempt either breaks with the lock or raises
+            raise FixError(f"could not take the lock {self.lock_path}")
         try:
             with os.fdopen(fd, "w") as f:
                 f.write(json.dumps({"pid": os.getpid(), "started_at": utc_now()}))
